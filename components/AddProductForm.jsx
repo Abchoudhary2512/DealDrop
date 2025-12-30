@@ -8,6 +8,7 @@ import { Button } from './ui/button'
 const AddProductForm = ({ user }) => {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleSubmit = async (e) => { };
 
@@ -41,8 +42,13 @@ const AddProductForm = ({ user }) => {
             )}
           </Button>
 
+
         </div>
       </form>
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </>
   )
 }
