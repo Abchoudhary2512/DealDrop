@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { Bell, LogIn, Rabbit, Shield, TrendingDown } from "lucide-react";
 import Image from "next/image";
+import { getProducts } from "./actions";
+import ProductCard from "@/components/ProductCard";
 
 
 
 export default async function Home() {
 
- const supabase = await createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  
-  const products = []; // Replace with actual product data
+
+  const products = user ? await getProducts() : [];
 
   const FEATURES = [
     {
@@ -57,11 +59,11 @@ export default async function Home() {
 
       {/* Main Content */}
       <section className="py-20 px-4 ">
-    <div className="max-w-7xl mx-auto text-center">
-      <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-6 py-2 rounded-full text-sm font-medium mb-6">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-6 py-2 rounded-full text-sm font-medium mb-6">
             Made with 🖤 by Ajay Bhakar
           </div>
-<h2 className="text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+          <h2 className="text-5xl font-bold text-gray-900 mb-4 tracking-tight">
             Never Miss a Price Drop
           </h2>
           <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
@@ -69,10 +71,10 @@ export default async function Home() {
             prices drop. Save money effortlessly.
           </p>
 
-        <AddProductForm user={user} />
+          <AddProductForm user={user} />
 
-      {/* {Product form} */}
-       {products.length === 0 && (
+          {/* {Product form} */}
+          {products.length === 0 && (
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
               {FEATURES.map(({ icon: Icon, title, description }) => (
                 <div
@@ -89,13 +91,32 @@ export default async function Home() {
             </div>
           )}
 
-      {/* Features Section */}
+          {/* Features Section */}
 
 
-       </div>
+        </div>
       </section>
 
-       {user && products.length === 0 && (
+
+      {user && products.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 pb-20">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-gray-900">
+              Your Tracked Products
+            </h3>
+            <span className="text-sm text-gray-500">
+              {products.length} {products.length === 1 ? "product" : "products"}
+            </span>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 items-start">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
+      {user && products.length === 0 && (
         <section className="max-w-2xl mx-auto px-4 pb-20 text-center">
           <div className="bg-white rounded-xl border-2 border-dashed border-gray-300 p-12">
             <TrendingDown className="w-16 h-16 text-gray-400 mx-auto mb-4" />
